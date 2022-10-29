@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<ID,E> {
-    private Validator<E> validator;
+    private final Validator<E> validator;
     Map<ID,E> entities;
     public InMemoryRepository(Validator<E> validator) {
         this.validator = validator;
@@ -35,7 +35,9 @@ public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<
     }
     @Override
     public E delete(ID id) {
-        return null;
+        E toDelete = this.findOne(id);
+        entities.remove(toDelete.getId());
+        return toDelete;
     }
     @Override
     public E update(E entity) {

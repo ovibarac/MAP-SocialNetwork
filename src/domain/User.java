@@ -1,15 +1,31 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Set;
+
 public class User extends Entity<Long>{
     private String name;
 
-    public User(String name) {
+    private ArrayList<Friendship> friendships;
+
+    public User(Long id, String name) {
+        super(id);
         this.name = name;
+        this.friendships=new ArrayList<Friendship>();
+    }
+
+    public ArrayList<Friendship> getFriendships() {
+        return friendships;
+    }
+
+    public void setFriendships(ArrayList<Friendship> friendships) {
+        this.friendships = friendships;
     }
 
     @Override
     public String toString() {
-        return "User{" +
+        return "User{" + "id=" + this.getId().toString() +
                 "name='" + name + '\'' +
                 '}';
     }
@@ -21,4 +37,5 @@ public class User extends Entity<Long>{
     public void setName(String name) {
         this.name = name;
     }
+
 }
