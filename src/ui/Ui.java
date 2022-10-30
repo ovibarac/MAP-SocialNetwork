@@ -1,21 +1,149 @@
 package ui;
 
+import domain.Friendship;
 import domain.User;
 import repo.exception.ValidationException;
 import service.UserService;
+import java.util.Scanner;
 
 public class Ui {
 
     UserService srv;
+    Scanner scanner = new Scanner(System.in);
 
     public Ui(UserService srv) {
         this.srv = srv;
     }
 
+    /**
+     * Run console UI
+     */
     public void run(){
+        int option=-1;
+
+        while(option!=0){
+            System.out.println("1.Add User\n2.Delete User\n3.Add friend\n4.Remove friend\n5.Number of communities\n6.Most sociable community\n0.Exit");
+            System.out.println("Option=");
+            option=scanner.nextInt();
+            generate();
+            switch (option) {
+                case 1 -> addUser();
+                case 2 -> deleteUser();
+                case 3 -> addFriend();
+                case 4 -> removeFriend();
+                case 5 -> nbOfCommunities();
+                case 6 -> mostSociable();
+            }
+            System.out.println();
+        }
+
+    }
+
+    private void addUser(){
+        try{
+            System.out.println("ID=");
+            Long id=scanner.nextLong();
+            System.out.println("Name=");
+            String name=scanner.next();
+            if(srv.createAndAdd(id, name)==null){
+                printUsers();
+            }else{
+                System.out.println("Id already exists");
+            }
+
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void deleteUser(){
+        try{
+            System.out.println("ID=");
+            Long id=scanner.nextLong();
+            User u = srv.delete(id);
+            if(u!=null){
+                printUsers();
+            }else{
+                System.out.println("Id does not exist");
+            }
+
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void addFriend() {
+        try{
+            System.out.println("ID1=");
+            Long id=scanner.nextLong();
+            System.out.println("ID2=");
+            Long id2=scanner.nextLong();
+            Friendship friendship = srv.addFriendship(id, id2);
+            if(friendship!=null){
+                System.out.println(friendship);
+            }else{
+                System.out.println("Cannot add friendship");
+            }
+
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void removeFriend() {
+        try{
+            System.out.println("ID1=");
+            Long id=scanner.nextLong();
+            System.out.println("ID2=");
+            Long id2=scanner.nextLong();
+
+            if(srv.removeFriendship(id, id2)){
+                System.out.println("Friendship removed");
+            }else{
+                System.out.println("Friendship does not exist");
+            }
+
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void nbOfCommunities(){
+        System.out.println("Number of communities: " + srv.nbOfCommunities());
+    }
+
+    private void mostSociable(){
+        System.out.println("Most sociable community: ");
+        srv.mostSociable().forEach(System.out::println);
+    }
+
+    private void printUsers(){
+        srv.findAll().forEach(System.out::println);
+    }
+
+    private void printFriendships(){
+        srv.findAll().forEach((x)->{
+            x.getFriendships().forEach(System.out::println);});
+    }
+
+    private void generate(){
+        srv.createAndAdd(1L, "Mimi");
+        srv.createAndAdd(2L, "Mumu");
+        srv.createAndAdd(3L, "Mama");
+        srv.createAndAdd(4L, "Andrei");
+        srv.createAndAdd(5L, "Maria");
+        srv.createAndAdd(6L, "George");
+
+        srv.addFriendship(1L, 2L);
+        srv.addFriendship(1L, 3L);
+        srv.addFriendship(2L, 4L);
+        srv.addFriendship(5L, 6L);
+    }
+    public void test(){
         try {
             srv.createAndAdd(1L, "Mimi");
             srv.createAndAdd(2L, "Mumu");
+            srv.createAndAdd(3L, "Mama");
             srv.createAndAdd(3L, "Mama");
         }catch(ValidationException | IllegalArgumentException e){
             System.out.println(e.getMessage());
@@ -28,17 +156,18 @@ public class Ui {
 //        }catch (IllegalArgumentException e){
 //            System.out.println(e.getMessage());
 //        }
-        srv.findAll().forEach((x)->{
-            x.getFriendships().forEach(System.out::println);});
-
+//        srv.findAll().forEach((x)->{
+//            x.getFriendships().forEach(System.out::println);});
+//
         System.out.println(srv.addFriendship(1L, 2L));
-        System.out.println(srv.addFriendship(1L, 3L));
-        System.out.println(srv.addFriendship(2L, 3L));
-        System.out.println(srv.removeFriendship(2L, 3L));
-        System.out.println(srv.removeFriendship(2L, 3L));
+//        System.out.println(srv.addFriendship(2L, 3L));
+//        System.out.println(srv.addFriendship(2L, 3L));
+//        System.out.println(srv.removeFriendship(2L, 3L));
+//        System.out.println(srv.removeFriendship(2L, 3L));
 
-        srv.findAll().forEach((x)->{
-            x.getFriendships().forEach(System.out::println);});
+//
 
+        System.out.println(srv.nbOfCommunities());
+        srv.mostSociable().forEach(System.out::println);
     }
 }

@@ -36,17 +36,28 @@ public class UserService{
      *         otherwise returns the entity (id already exists)
      * @throws ValidationException
      *            if the id is not valid
-     * @throws ValidationException
-     *            if the name is not valid
+     *            or if the name is not valid
      */
     public User createAndAdd(Long id, String name){
         User u = new User(id, name);
         return this.srv.add(u);
     }
 
+    /**
+     * @return all users
+     */
     public Iterable<User> findAll(){
         return srv.findAll();
     }
+
+    /**
+     *  removes the entity with the specified id
+     * @param id
+     *      id must be not null
+     * @return the removed entity or null if there is no entity with the given id
+     * @throws IllegalArgumentException
+     *                   if the given id is null.
+     */
     public User delete(Long id){
         return srv.delete(id);
     }
@@ -104,7 +115,6 @@ public class UserService{
      * @return the number of connected components
      */
     public AtomicInteger nbOfCommunities(){
-        //dfs
         Map<Long, Boolean> viz = new HashMap<>();
         srv.findAll().forEach((x)->{viz.put(x.getId(), false);});
         AtomicInteger componentCount = new AtomicInteger();
@@ -112,7 +122,7 @@ public class UserService{
                 (x)->{
                     if(!viz.get(x.getId())){
                         User crt = srv.findOne(x.getId());
-                        DFS(viz, crt);
+                        DFSDist(viz, crt);
                         componentCount.getAndIncrement();
                     }
                 }
@@ -120,16 +130,72 @@ public class UserService{
         return componentCount;
     }
 
-    private void DFS(Map<Long, Boolean> viz, User crtUser){
+    /**
+     * find longest connected component
+     * @return list of users in most connected component
+     */
+    public ArrayList<User> mostSociable(){
+        Map<Long, Boolean> viz = new HashMap<>();
+        //TODO make it count 1-2 1-3 as one community
+        srv.findAll().forEach((x)->{viz.put(x.getId(), false);});
+        int maxL = 0;
+        Long idNode=0L;
+        for (User x:srv.findAll()) {
+            if(!viz.get(x.getId())){
+                User crt = srv.findOne(x.getId());
+                int dist=DFSDist(viz, crt);
+                if(maxL<dist){
+                    maxL=dist;
+                    idNode=crt.getId();
+                }
+            }
+        }
+
+        Map<Long, Boolean> viz2 = new HashMap<>();
+        srv.findAll().forEach((x)->{viz2.put(x.getId(), false);});
+
+        ArrayList<User> list=new ArrayList<>();
+        DFSList(viz2, srv.findOne(idNode), list);
+        return list;
+    }
+
+    /**
+     * depth-first search in user network and calculate distance
+     * @param viz     - vizited users
+     * @param crtUser - current node
+     * @return distance of current path
+     */
+    private int DFSDist(Map<Long, Boolean> viz, User crtUser){
         viz.remove(crtUser.getId());
         viz.put(crtUser.getId(), true);
-        crtUser.getFriendships().forEach((x)->{
-        //TODO make map change outside of function
-            if(x.getU1() == crtUser && !viz.get(x.getU1().getId())){
-                DFS(viz, x.getU2());
-            }else if(x.getU2() == crtUser && !viz.get(x.getU2().getId())){
-                DFS(viz, x.getU1());
+
+        for (Friendship friendship: crtUser.getFriendships()) {
+            if(friendship.getU1() == crtUser && !viz.get(friendship.getU2().getId())){
+                return 1+DFSDist(viz, friendship.getU2());
+            }else if(friendship.getU2() == crtUser && !viz.get(friendship.getU1().getId())){
+                return 1+DFSDist(viz, friendship.getU1());
             }
-        });
+        }
+
+        return 1;
+    }
+
+    /**
+     * depth-first search in user network and save visited nodes
+     * @param viz     - vizited users
+     * @param crtUser - current node
+     * @param list - output list to save visited nodes
+     */
+    private void DFSList(Map<Long, Boolean> viz, User crtUser, ArrayList<User> list){
+        viz.remove(crtUser.getId());
+        viz.put(crtUser.getId(), true);
+        list.add(crtUser);
+        for (Friendship friendship: crtUser.getFriendships()) {
+            if(friendship.getU1() == crtUser && !viz.get(friendship.getU2().getId())){
+                DFSList(viz, friendship.getU2(), list);
+            }else if(friendship.getU2() == crtUser && !viz.get(friendship.getU1().getId())){
+                DFSList(viz, friendship.getU1(), list);
+            }
+        }
     }
 }
