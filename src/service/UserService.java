@@ -4,9 +4,7 @@ import domain.Friendship;
 import domain.User;
 import repo.InMemoryRepository;
 import repo.Repository;
-import repo.exception.UserValidator;
-import repo.exception.ValidationException;
-import repo.exception.Validator;
+import repo.exception.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +19,7 @@ public class UserService{
     Service<Long, User> srv;
 
     public UserService() {
-        Validator<User> val = new UserValidator();
+        Validator<User> val = ValidatorFactory.createValidator(Strategy.user);
         Repository<Long, User> repo = new InMemoryRepository<Long, User>(val);
         this.srv = new GenericService<Long, User>(repo);
     }

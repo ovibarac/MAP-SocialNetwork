@@ -2,8 +2,11 @@ package ui;
 
 import domain.Friendship;
 import domain.User;
+import repo.exception.EmptyIdException;
 import repo.exception.ValidationException;
 import service.UserService;
+
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Ui {
@@ -51,8 +54,11 @@ public class Ui {
                 System.out.println("Id already exists");
             }
 
-        } catch(Exception e) {
+        } catch(ValidationException e) {
             System.out.println(e.getMessage());
+        }catch(InputMismatchException e){
+            System.out.println("Incorrect input");
+            scanner.next();
         }
     }
 
@@ -67,7 +73,10 @@ public class Ui {
                 System.out.println("Id does not exist");
             }
 
-        } catch(Exception e) {
+        }catch(InputMismatchException e){
+            System.out.println("Incorrect input");
+            scanner.next();
+        }catch(Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -85,6 +94,9 @@ public class Ui {
                 System.out.println("Cannot add friendship");
             }
 
+        }catch(InputMismatchException e){
+            System.out.println("Incorrect input");
+            scanner.next();
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
@@ -103,6 +115,9 @@ public class Ui {
                 System.out.println("Friendship does not exist");
             }
 
+        } catch(InputMismatchException e){
+            System.out.println("Incorrect input");
+            scanner.next();
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
