@@ -2,7 +2,8 @@ package service;
 
 import domain.Friendship;
 import domain.User;
-import repo.InMemoryRepository;
+import repo.FriendshipFileRepo;
+import repo.UserFileRepository;
 import repo.Repository;
 import repo.exception.*;
 
@@ -17,10 +18,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class UserService{
 
     Service<Long, User> srv;
-
+    FriendshipFileRepo friendshipRepo;
     public UserService() {
         Validator<User> val = ValidatorFactory.createValidator(Strategy.user);
-        Repository<Long, User> repo = new InMemoryRepository<Long, User>(val);
+//        Repository<Long, User> repo = new InMemoryRepository<Long, User>(val);
+        Repository<Long, User> repo = new UserFileRepository(val, "users.txt");
+        friendshipRepo = new FriendshipFileRepo("friendships.txt",repo);
         this.srv = new GenericService<Long, User>(repo);
     }
 
@@ -83,6 +86,7 @@ public class UserService{
         }else{
             friendships1.add(friendship);
             friendships2.add(friendship);
+            friendshipRepo.save(friendship);
         }
 
         return friendship;
@@ -106,7 +110,7 @@ public class UserService{
         Friendship friendship = new Friendship(u1, u2);
         ArrayList<Friendship> friendships1 = u1.getFriendships();
         ArrayList<Friendship> friendships2 = u2.getFriendships();
-        return friendships1.remove(friendship) && friendships2.remove(friendship);
+        return friendships1.remove(friendship) && friendships2.remove(friendship) && friendshipRepo.remove(friendship);
     }
 
     /**

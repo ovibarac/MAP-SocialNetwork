@@ -22,13 +22,13 @@ public class Ui {
      * Run console UI
      */
     public void run(){
+//        generate();
         int option=-1;
-
         while(option!=0){
             System.out.println("1.Add User\n2.Delete User\n3.Add friend\n4.Remove friend\n5.Number of communities\n6.Most sociable community\n0.Exit");
             System.out.println("Option=");
             option=scanner.nextInt();
-            generate();
+
             switch (option) {
                 case 1 -> addUser();
                 case 2 -> deleteUser();

@@ -1,0 +1,4 @@
+Friendship{1,2}
+Friendship{2,3}
+Friendship{5,6}
+Friendship{2,4}

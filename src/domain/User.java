@@ -15,6 +15,17 @@ public class User extends Entity<Long>{
         this.friendships=new ArrayList<Friendship>();
     }
 
+    /**
+     * Create instance from string
+     * @param userString - file string, written as Name{id=x}
+     */
+    public User(String userString){
+//        super(userString);
+        super(Long.parseLong(userString.substring(userString.indexOf('=') + 1, userString.indexOf('}'))));
+        this.name=userString.substring(0, userString.indexOf('{'));
+        this.friendships=new ArrayList<Friendship>();
+    }
+
     public ArrayList<Friendship> getFriendships() {
         return friendships;
     }

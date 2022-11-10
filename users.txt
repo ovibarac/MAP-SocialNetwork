@@ -1,0 +1,6 @@
+Mimi{id=1}
+Mumu{id=2}
+Mama{id=3}
+Andrei{id=4}
+Maria{id=5}
+George{id=6}
