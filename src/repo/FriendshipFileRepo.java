@@ -4,6 +4,7 @@ import domain.Friendship;
 import domain.User;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,18 +27,22 @@ public class FriendshipFileRepo {
 
     }
 
+    public List<Friendship> getFriendships() {
+        return friendships;
+    }
+
     private void loadFromFile(){
         try{
             BufferedReader reader= new BufferedReader(new FileReader(file.getName()));
             String line= reader.readLine();
             while(line!=null){
                 Long id1=Long.parseLong(line.substring(line.indexOf('{') + 1, line.indexOf(',')));
-                Long id2=Long.parseLong(line.substring(line.indexOf(',') + 1, line.indexOf('}')));
-
+                Long id2=Long.parseLong(line.substring(line.indexOf(',') + 1, line.indexOf(' ')-1));
+                LocalDateTime date = LocalDateTime.parse(line.substring(line.indexOf(' ')+1, line.indexOf('}')));
                 User u1 = userRepo.findOne(id1);
                 User u2 = userRepo.findOne(id2);
 
-                Friendship f = new Friendship(u1, u2);
+                Friendship f = new Friendship(u1, u2, date);
 
                 ArrayList<Friendship> friendships1 = u1.getFriendships();
                 friendships1.add(f);

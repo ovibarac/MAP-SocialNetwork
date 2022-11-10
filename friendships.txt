@@ -1,4 +1,3 @@
-Friendship{1,2}
-Friendship{2,3}
-Friendship{5,6}
-Friendship{2,4}
+Friendship{2,3, 2022-11-10T17:28:57.6583711}
+Friendship{1,2, 2022-11-10T17:29:06.4634301}
+Friendship{1,3, 2022-11-10T17:29:41.1089465}

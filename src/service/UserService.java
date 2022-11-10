@@ -9,6 +9,7 @@ import repo.exception.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -49,6 +50,13 @@ public class UserService{
      */
     public Iterable<User> findAll(){
         return srv.findAll();
+    }
+
+    /**
+     * @return all friendships
+     */
+    public List<Friendship> allFriendships(){
+        return friendshipRepo.getFriendships();
     }
 
     /**

@@ -1,6 +1,8 @@
 package domain;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Objects;
 
 public class Friendship {
@@ -12,11 +14,14 @@ public class Friendship {
     public Friendship(User u1, User u2) {
         this.u1 = u1;
         this.u2 = u2;
-        friendsFrom=LocalDateTime.now();
+//        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
+        friendsFrom= LocalDateTime.now();
     }
 
-    public Friendship(String friendshipString) {
-
+    public Friendship(User u1, User u2, LocalDateTime friendsFrom) {
+        this.u1 = u1;
+        this.u2 = u2;
+        this.friendsFrom=friendsFrom;
     }
 
     @Override
@@ -35,7 +40,8 @@ public class Friendship {
 
     @Override
     public String toString() {
-        return "Friendship{" + u1.getId() + ','+u2.getId()+'}';
+        return "Friendship{" + u1.getId() + ','+u2.getId()+", "+ friendsFrom.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) +'}';
+        //TODO oare printeaza bine pt load??
     }
 
     public User getU1() {

@@ -22,10 +22,9 @@ public class Ui {
      * Run console UI
      */
     public void run(){
-//        generate();
         int option=-1;
         while(option!=0){
-            System.out.println("1.Add User\n2.Delete User\n3.Add friend\n4.Remove friend\n5.Number of communities\n6.Most sociable community\n0.Exit");
+            System.out.println("1.Add User\n2.Delete User\n3.Add friend\n4.Remove friend\n5.Number of communities\n6.Most sociable community\n7.Print Users\n8.Print Friendships\n0.Exit");
             System.out.println("Option=");
             option=scanner.nextInt();
 
@@ -36,6 +35,8 @@ public class Ui {
                 case 4 -> removeFriend();
                 case 5 -> nbOfCommunities();
                 case 6 -> mostSociable();
+                case 7 -> printUsers();
+                case 8 -> printFriendships();
             }
             System.out.println();
         }
@@ -137,8 +138,7 @@ public class Ui {
     }
 
     private void printFriendships(){
-        srv.findAll().forEach((x)->{
-            x.getFriendships().forEach(System.out::println);});
+        srv.allFriendships().forEach(System.out::println);
     }
 
     private void generate(){
