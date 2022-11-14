@@ -50,4 +50,16 @@ public interface Service<ID, E extends Entity<ID>> {
      *                  if id is null.
      */
     E findOne(ID id);
+    /**
+     * update entity
+     * @param e
+     *          entity must not be null
+     * @return null - if the entity is updated,
+     *                otherwise  returns the entity  - (e.g id does not exist).
+     * @throws IllegalArgumentException
+     *             if the given entity is null.
+     * @throws ValidationException
+     *             if the entity is not valid.
+     */
+    E update(E e);
 }

@@ -32,4 +32,5 @@ public class GenericService <ID, E extends Entity<ID>> implements Service<ID, E>
     }
 
 
+    public E update(E e){return repo.update(e);}
 }

@@ -24,19 +24,20 @@ public class Ui {
     public void run(){
         int option=-1;
         while(option!=0){
-            System.out.println("1.Add User\n2.Delete User\n3.Add friend\n4.Remove friend\n5.Number of communities\n6.Most sociable community\n7.Print Users\n8.Print Friendships\n0.Exit");
+            System.out.println("1.Add User\n2.Delete User\n3.Update user\n4.Add friend\n5.Remove friend\n6.Number of communities\n7.Most sociable community\n8.Print Users\n9.Print Friendships\n0.Exit");
             System.out.println("Option=");
             option=scanner.nextInt();
 
             switch (option) {
                 case 1 -> addUser();
                 case 2 -> deleteUser();
-                case 3 -> addFriend();
-                case 4 -> removeFriend();
-                case 5 -> nbOfCommunities();
-                case 6 -> mostSociable();
-                case 7 -> printUsers();
-                case 8 -> printFriendships();
+                case 3 -> updateUser();
+                case 4 -> addFriend();
+                case 5 -> removeFriend();
+                case 6 -> nbOfCommunities();
+                case 7 -> mostSociable();
+                case 8 -> printUsers();
+                case 9 -> printFriendships();
             }
             System.out.println();
         }
@@ -79,6 +80,26 @@ public class Ui {
             scanner.next();
         }catch(Exception e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateUser(){
+        try{
+            System.out.println("ID=");
+            Long id=scanner.nextLong();
+            System.out.println("Name=");
+            String name=scanner.next();
+            if(srv.update(id, name)== null){
+                printUsers();
+            }else{
+                System.out.println("Cannot update");
+            }
+
+        } catch(ValidationException e) {
+            System.out.println(e.getMessage());
+        }catch(InputMismatchException e){
+            System.out.println("Incorrect input");
+            scanner.next();
         }
     }
 
@@ -150,8 +171,8 @@ public class Ui {
         srv.createAndAdd(6L, "George");
 
         srv.addFriendship(1L, 2L);
-        srv.addFriendship(1L, 3L);
-        srv.addFriendship(2L, 4L);
+        srv.addFriendship(3L, 4L);
+        srv.addFriendship(2L, 3L);
         srv.addFriendship(5L, 6L);
     }
     public void test(){

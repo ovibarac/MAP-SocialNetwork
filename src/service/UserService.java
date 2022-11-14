@@ -71,6 +71,12 @@ public class UserService{
         return srv.delete(id);
     }
 
+    public User update(Long id, String name){
+        User u = new User(id, name);
+
+        return srv.update(u);
+    }
+
     /**
      * creates and adds friendship between entities with specified id
      * @param id1 - id of first entity
@@ -146,19 +152,18 @@ public class UserService{
      */
     public ArrayList<User> mostSociable(){
         Map<Long, Boolean> viz = new HashMap<>();
-        //TODO make it count 1-2 1-3 as one community
         srv.findAll().forEach((x)->{viz.put(x.getId(), false);});
         int maxL = 0;
         Long idNode=0L;
         for (User x:srv.findAll()) {
-            if(!viz.get(x.getId())){
+//            if(!viz.get(x.getId())){
                 User crt = srv.findOne(x.getId());
                 int dist=DFSDist(viz, crt);
                 if(maxL<dist){
                     maxL=dist;
                     idNode=crt.getId();
                 }
-            }
+//            }
         }
 
         Map<Long, Boolean> viz2 = new HashMap<>();

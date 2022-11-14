@@ -63,5 +63,10 @@ public class UserFileRepository extends InMemoryRepository<Long, User>{
         return d;
     }
 
-
+    @Override
+    public User update(User entity) {
+        User u= super.update(entity);
+        saveToFile();
+        return u;
+    }
 }
