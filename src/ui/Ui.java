@@ -24,7 +24,7 @@ public class Ui {
     public void run(){
         int option=-1;
         while(option!=0){
-            System.out.println("1.Add User\n2.Delete User\n3.Update user\n4.Add friend\n5.Remove friend\n6.Number of communities\n7.Most sociable community\n8.Print Users\n9.Print Friendships\n0.Exit");
+            System.out.println("1.Add User\n2.Delete User\n3.Update user\n4.Add friend\n5.Remove friend\n6.Number of communities\n7.Most sociable community\n8.Print Users\n9.Print Friendships\n10.Find user\n0.Exit");
             System.out.println("Option=");
             option=scanner.nextInt();
 
@@ -38,6 +38,7 @@ public class Ui {
                 case 7 -> mostSociable();
                 case 8 -> printUsers();
                 case 9 -> printFriendships();
+                case 10 -> findUser();
             }
             System.out.println();
         }
@@ -160,6 +161,23 @@ public class Ui {
 
     private void printFriendships(){
         srv.allFriendships().forEach(System.out::println);
+    }
+
+    private void findUser(){
+        try{
+            System.out.println("ID1=");
+            Long id=scanner.nextLong();
+            User u = srv.findOne(id);
+            if(u != null){
+                System.out.println(u);
+            }else{
+                System.out.println("User does not exist");
+            }
+
+        } catch(InputMismatchException e){
+            System.out.println("Incorrect input");
+            scanner.next();
+        }
     }
 
     private void generate(){

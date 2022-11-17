@@ -52,6 +52,8 @@ public class UserService{
         return srv.findAll();
     }
 
+    public User findOne(Long id){return srv.findOne(id);}
+
     /**
      * @return all friendships
      */
