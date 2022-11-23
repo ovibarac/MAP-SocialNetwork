@@ -7,6 +7,7 @@ import repo.exception.ValidationException;
 import service.UserService;
 
 import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Ui {
@@ -51,7 +52,7 @@ public class Ui {
             Long id=scanner.nextLong();
             System.out.println("Name=");
             String name=scanner.next();
-            if(srv.createAndAdd(id, name)==null){
+            if(srv.createAndAdd(id, name).isEmpty()){
                 printUsers();
             }else{
                 System.out.println("Id already exists");
@@ -69,8 +70,8 @@ public class Ui {
         try{
             System.out.println("ID=");
             Long id=scanner.nextLong();
-            User u = srv.delete(id);
-            if(u!=null){
+            Optional<User> u = srv.delete(id);
+            if(u.isPresent()){
                 printUsers();
             }else{
                 System.out.println("Id does not exist");
@@ -90,7 +91,7 @@ public class Ui {
             Long id=scanner.nextLong();
             System.out.println("Name=");
             String name=scanner.next();
-            if(srv.update(id, name)== null){
+            if(srv.update(id, name).isEmpty()){
                 printUsers();
             }else{
                 System.out.println("Cannot update");
@@ -167,8 +168,8 @@ public class Ui {
         try{
             System.out.println("ID1=");
             Long id=scanner.nextLong();
-            User u = srv.findOne(id);
-            if(u != null){
+            Optional<User> u = srv.findOne(id);
+            if(u.isPresent()){
                 System.out.println(u);
             }else{
                 System.out.println("User does not exist");

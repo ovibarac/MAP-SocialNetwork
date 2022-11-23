@@ -7,6 +7,7 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FriendshipFileRepo {
     File file;
@@ -39,8 +40,8 @@ public class FriendshipFileRepo {
                 Long id1=Long.parseLong(line.substring(line.indexOf('{') + 1, line.indexOf(',')));
                 Long id2=Long.parseLong(line.substring(line.indexOf(',') + 1, line.indexOf(' ')-1));
                 LocalDateTime date = LocalDateTime.parse(line.substring(line.indexOf(' ')+1, line.indexOf('}')));
-                User u1 = userRepo.findOne(id1);
-                User u2 = userRepo.findOne(id2);
+                User u1 = userRepo.findOne(id1).get();
+                User u2 = userRepo.findOne(id2).get();
 
                 Friendship f = new Friendship(u1, u2, date);
 

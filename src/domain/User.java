@@ -32,7 +32,7 @@ public class User extends Entity<Long>{
 
     public void setFriendships(ArrayList<Friendship> friendships) {
         this.friendships = friendships;
-    }
+   }
 
     @Override
     public String toString() {

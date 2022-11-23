@@ -2,30 +2,24 @@ package service;
 
 import domain.Friendship;
 import domain.User;
-import repo.FriendshipFileRepo;
-import repo.UserFileRepository;
-import repo.Repository;
+import repo.*;
 import repo.exception.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Decorator class and factory for GenericService
- */
 public class UserService{
 
-    Service<Long, User> srv;
     FriendshipFileRepo friendshipRepo;
+
+    Repository<Long, User> repo;
+
     public UserService() {
         Validator<User> val = ValidatorFactory.createValidator(Strategy.user);
 //        Repository<Long, User> repo = new InMemoryRepository<Long, User>(val);
-        Repository<Long, User> repo = new UserFileRepository(val, "users.txt");
-        friendshipRepo = new FriendshipFileRepo("friendships.txt",repo);
-        this.srv = new GenericService<Long, User>(repo);
+//        repo = new UserFileRepository(val, "users.txt");
+        repo = new UserDbRepo("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres", (UserValidator) val);
+//        friendshipRepo = new FriendshipFileRepo("friendships.txt",repo);
     }
 
     /**
@@ -34,25 +28,36 @@ public class UserService{
      *         id must not be null
      * @param name
      *         name must not be null
-     * @return null- if the given id is saved
+     * @return Optional<User> containing
+     *         null- if the given id is saved
      *         otherwise returns the entity (id already exists)
      * @throws ValidationException
      *            if the id is not valid
      *            or if the name is not valid
      */
-    public User createAndAdd(Long id, String name){
+    public Optional<User> createAndAdd(Long id, String name){
         User u = new User(id, name);
-        return this.srv.add(u);
+        return repo.save(u);
     }
 
     /**
      * @return all users
      */
     public Iterable<User> findAll(){
-        return srv.findAll();
+        return repo.findAll();
     }
 
-    public User findOne(Long id){return srv.findOne(id);}
+    /**
+     *
+     * @param id -the id of the entity to be returned
+     *           id must not be null
+     * @return Optional<User> containing
+     *          the entity with the specified id
+     *          or null - if there is no entity with the given id
+     * @throws IllegalArgumentException
+     *                  if id is null.
+     */
+    public Optional<User> findOne(Long id){return repo.findOne(id);}
 
     /**
      * @return all friendships
@@ -65,18 +70,29 @@ public class UserService{
      *  removes the entity with the specified id
      * @param id
      *      id must be not null
-     * @return the removed entity or null if there is no entity with the given id
+     * @return Optional<User> containing the removed entity or null if there is no entity with the given id
      * @throws IllegalArgumentException
      *                   if the given id is null.
      */
-    public User delete(Long id){
-        return srv.delete(id);
+    public Optional<User> delete(Long id){
+        return repo.delete(id);
     }
 
-    public User update(Long id, String name){
+    /**
+     * update entity
+     * @param id - id of existing User
+     * @param name - new name of User
+     * @return Optional<User> containing null - if the entity is updated,
+     *                otherwise the entity  - (e.g id does not exist).
+     * @throws IllegalArgumentException
+     *             if the given entity is null.
+     * @throws ValidationException
+     *             if the entity is not valid.
+     */
+    public Optional<User> update(Long id, String name){
         User u = new User(id, name);
 
-        return srv.update(u);
+        return repo.update(u);
     }
 
     /**
@@ -89,14 +105,15 @@ public class UserService{
      *         or the new Friendship
      */
     public Friendship addFriendship(Long id1, Long id2){
-        User u1 = srv.findOne(id1);
-        User u2 = srv.findOne(id2);
-        if(u1==u2 || u1 == null || u2 == null){
+        Optional<User> u1 = repo.findOne(id1);
+        Optional<User> u2 = repo.findOne(id2);
+
+        if(u1==u2 || u1.isEmpty() || u2.isEmpty()){
             return null;
         }
-        Friendship friendship = new Friendship(u1, u2);
-        ArrayList<Friendship> friendships1 = u1.getFriendships();
-        ArrayList<Friendship> friendships2 = u2.getFriendships();
+        Friendship friendship = new Friendship(u1.get(), u2.get());
+        ArrayList<Friendship> friendships1 = u1.get().getFriendships();
+        ArrayList<Friendship> friendships2 = u2.get().getFriendships();
         if(friendships1.contains(friendship)){
             return null;
         }else{
@@ -118,14 +135,14 @@ public class UserService{
      *         or true
      */
     public boolean removeFriendship(Long id1, Long id2){
-        User u1 = srv.findOne(id1);
-        User u2 = srv.findOne(id2);
-        if(u1==u2 || u1 == null || u2 == null){
+        Optional<User> u1 = repo.findOne(id1);
+        Optional<User> u2 = repo.findOne(id2);
+        if(u1==u2 || u1.isEmpty() || u2.isEmpty()){
             return false;
         }
-        Friendship friendship = new Friendship(u1, u2);
-        ArrayList<Friendship> friendships1 = u1.getFriendships();
-        ArrayList<Friendship> friendships2 = u2.getFriendships();
+        Friendship friendship = new Friendship(u1.get(), u2.get());
+        ArrayList<Friendship> friendships1 = u1.get().getFriendships();
+        ArrayList<Friendship> friendships2 = u2.get().getFriendships();
         return friendships1.remove(friendship) && friendships2.remove(friendship) && friendshipRepo.remove(friendship);
     }
 
@@ -134,13 +151,13 @@ public class UserService{
      */
     public AtomicInteger nbOfCommunities(){
         Map<Long, Boolean> viz = new HashMap<>();
-        srv.findAll().forEach((x)->{viz.put(x.getId(), false);});
+        repo.findAll().forEach((x)->{viz.put(x.getId(), false);});
         AtomicInteger componentCount = new AtomicInteger();
-        srv.findAll().forEach(
+        repo.findAll().forEach(
                 (x)->{
                     if(!viz.get(x.getId())){
-                        User crt = srv.findOne(x.getId());
-                        DFSDist(viz, crt);
+                        Optional<User> crt = repo.findOne(x.getId());
+                        crt.ifPresent(user -> DFSDist(viz, user));
                         componentCount.getAndIncrement();
                     }
                 }
@@ -154,25 +171,25 @@ public class UserService{
      */
     public ArrayList<User> mostSociable(){
         Map<Long, Boolean> viz = new HashMap<>();
-        srv.findAll().forEach((x)->{viz.put(x.getId(), false);});
+        repo.findAll().forEach((x)->{viz.put(x.getId(), false);});
         int maxL = 0;
         Long idNode=0L;
-        for (User x:srv.findAll()) {
-//            if(!viz.get(x.getId())){
-                User crt = srv.findOne(x.getId());
-                int dist=DFSDist(viz, crt);
+        for (User x:repo.findAll()) {
+            Optional<User> crt = repo.findOne(x.getId());
+            if(crt.isPresent()){
+                int dist=DFSDist(viz, crt.get());
                 if(maxL<dist){
                     maxL=dist;
-                    idNode=crt.getId();
+                    idNode=crt.get().getId();
                 }
-//            }
+            }
         }
 
         Map<Long, Boolean> viz2 = new HashMap<>();
-        srv.findAll().forEach((x)->{viz2.put(x.getId(), false);});
+        repo.findAll().forEach((x)->{viz2.put(x.getId(), false);});
 
         ArrayList<User> list=new ArrayList<>();
-        DFSList(viz2, srv.findOne(idNode), list);
+        DFSList(viz2, repo.findOne(idNode).get(), list);
         return list;
     }
 

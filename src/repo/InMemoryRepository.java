@@ -4,6 +4,7 @@ import repo.exception.Validator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<ID,E> {
     private final Validator<E> validator;
@@ -13,42 +14,42 @@ public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<
         entities=new HashMap<ID,E>();
     }
     @Override
-    public E findOne(ID id){
+    public Optional<E> findOne(ID id){
         if (id==null)
             throw new IllegalArgumentException("id must be not null");
-        return entities.get(id);
+        return Optional.ofNullable(entities.get(id));
     }
     @Override
     public Iterable<E> findAll() {
         return entities.values();
     }
     @Override
-    public E save(E entity) {
+    public Optional<E> save(E entity) {
         if (entity==null)
             throw new IllegalArgumentException("entity must be not null");
         validator.validate(entity);
         if(entities.get(entity.getId()) != null) {
-            return entity;
+            return Optional.of(entity);
         }
         else entities.put(entity.getId(),entity);
         return null;
     }
     @Override
-    public E delete(ID id) {
-        E toDelete = this.findOne(id);
-        entities.remove(toDelete.getId());
+    public Optional<E> delete(ID id) {
+        Optional<E> toDelete = this.findOne(id);
+        toDelete.ifPresent(e -> entities.remove(e.getId()));
         return toDelete;
     }
     @Override
-    public E update(E entity) {
+    public Optional<E> update(E entity) {
         if(entity == null)
             throw new IllegalArgumentException("entity must be not null!");
         validator.validate(entity);
         entities.put(entity.getId(),entity);
         if(entities.get(entity.getId()) != null) {
             entities.put(entity.getId(),entity);
-            return null;
+            return Optional.empty();
         }
-        return entity;
+        return Optional.of(entity);
     }
 }

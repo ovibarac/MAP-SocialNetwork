@@ -4,6 +4,7 @@ import domain.User;
 import repo.exception.Validator;
 
 import java.io.*;
+import java.util.Optional;
 
 public class UserFileRepository extends InMemoryRepository<Long, User>{
     File userFile;
@@ -50,22 +51,22 @@ public class UserFileRepository extends InMemoryRepository<Long, User>{
     }
 
     @Override
-    public User save(User entity) {
-        User e = super.save(entity);
+    public Optional<User> save(User entity) {
+        Optional<User> e = super.save(entity);
         saveToFile();
         return e;
     }
 
     @Override
-    public User delete(Long id) {
-        User d = super.delete(id);
+    public Optional<User> delete(Long id) {
+        Optional<User> d = super.delete(id);
         saveToFile();
         return d;
     }
 
     @Override
-    public User update(User entity) {
-        User u= super.update(entity);
+    public Optional<User> update(User entity) {
+        Optional<User> u= super.update(entity);
         saveToFile();
         return u;
     }
