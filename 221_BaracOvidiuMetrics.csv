@@ -1,0 +1,129 @@
+Complexity metrics,Sun, 27 Nov 2022 16:33:05 EET
+Method,CogC,ev(G),iv(G),v(G)
+Main.main(String[]),0,1,1,1
+domain.Entity.Entity(ID),0,1,1,1
+domain.Entity.equals(Object),3,3,2,4
+domain.Entity.getId(),0,1,1,1
+domain.Entity.hashCode(),0,1,1,1
+domain.Entity.setId(ID),0,1,1,1
+domain.Entity.toString(),0,1,1,1
+"domain.Friendship.Friendship(Long, User, User)",0,1,1,1
+"domain.Friendship.Friendship(Long, User, User, LocalDateTime)",0,1,1,1
+domain.Friendship.equals(Object),6,3,5,7
+domain.Friendship.getFriendsFrom(),0,1,1,1
+domain.Friendship.getU1(),0,1,1,1
+domain.Friendship.getU2(),0,1,1,1
+domain.Friendship.hashCode(),0,1,1,1
+domain.Friendship.setFriendsFrom(LocalDateTime),0,1,1,1
+domain.Friendship.setU1(User),0,1,1,1
+domain.Friendship.setU2(User),0,1,1,1
+domain.Friendship.toString(),0,1,1,1
+"domain.User.User(Long, String)",0,1,1,1
+domain.User.User(String),0,1,1,1
+domain.User.getFriendships(),0,1,1,1
+domain.User.getName(),0,1,1,1
+domain.User.setFriendships(ArrayList<Friendship>),0,1,1,1
+domain.User.setName(String),0,1,1,1
+domain.User.toString(),0,1,1,1
+"repo.AbstractFileRepository.AbstractFileRepository(Validator<E>, String)",1,1,2,2
+repo.AbstractFileRepository.delete(ID),0,1,1,1
+repo.AbstractFileRepository.save(E),0,1,1,1
+repo.AbstractFileRepository.update(E),0,1,1,1
+"repo.FriendshipDbRepo.FriendshipDbRepo(String, String, String, Validator<Friendship>, Repository<Long, User>)",0,1,1,1
+"repo.FriendshipDbRepo.createFriendshipAndAddToUsers(Long, Long, Long)",2,2,2,3
+repo.FriendshipDbRepo.delete(Long),1,1,2,2
+repo.FriendshipDbRepo.findAll(),2,1,3,3
+repo.FriendshipDbRepo.findOne(Long),2,2,3,3
+repo.FriendshipDbRepo.save(Friendship),1,1,2,2
+repo.FriendshipDbRepo.update(Friendship),1,1,2,2
+"repo.FriendshipFileRepo.FriendshipFileRepo(Validator<Friendship>, String, Repository<Long, User>)",0,1,1,1
+"repo.FriendshipFileRepo.createFriendshipAndAddToUsers(Long, Long, Long)",2,2,2,3
+repo.FriendshipFileRepo.loadFromFile(),2,1,2,3
+repo.FriendshipFileRepo.saveToFile(),3,1,1,3
+repo.InMemoryRepository.InMemoryRepository(Validator<E>),0,1,1,1
+repo.InMemoryRepository.delete(ID),0,1,1,1
+repo.InMemoryRepository.findAll(),0,1,1,1
+repo.InMemoryRepository.findOne(ID),1,2,1,2
+repo.InMemoryRepository.save(E),3,3,2,3
+repo.InMemoryRepository.update(E),2,3,2,3
+"repo.UserDbRepo.UserDbRepo(String, String, String, UserValidator)",0,1,1,1
+repo.UserDbRepo.delete(Long),1,1,2,2
+repo.UserDbRepo.findAll(),2,1,3,3
+repo.UserDbRepo.findOne(Long),2,2,3,3
+repo.UserDbRepo.save(User),1,1,2,2
+repo.UserDbRepo.update(User),1,1,2,2
+"repo.UserFileRepository.UserFileRepository(Validator<User>, String)",0,1,1,1
+repo.UserFileRepository.loadFromFile(),2,1,2,3
+repo.UserFileRepository.saveToFile(),3,1,1,3
+repo.exception.EmptyIdException.EmptyIdException(),0,1,1,1
+repo.exception.EmptyNameException.EmptyNameException(),0,1,1,1
+repo.exception.EntityValidator.validate(Entity),1,2,1,2
+repo.exception.NameContainsNumbersException.NameContainsNumbersException(),0,1,1,1
+repo.exception.UserValidator.validate(User),3,4,1,4
+repo.exception.ValidationException.ValidationException(String),0,1,1,1
+repo.exception.Validator.validate(E),0,1,1,1
+repo.exception.ValidatorFactory.createValidator(Strategy),2,2,1,2
+"service.UserService.DFSDist(Map<Long, Boolean>, User)",8,4,6,6
+"service.UserService.DFSList(Map<Long, Boolean>, User, ArrayList<User>)",8,1,6,6
+service.UserService.UserService(),0,1,1,1
+"service.UserService.addFriendship(Long, Long, Long)",5,3,5,6
+service.UserService.allFriendships(),0,1,1,1
+"service.UserService.createAndAdd(Long, String)",0,1,1,1
+service.UserService.delete(Long),0,1,1,1
+service.UserService.findAll(),0,1,1,1
+service.UserService.findFriendship(Long),0,1,1,1
+service.UserService.findOne(Long),0,1,1,1
+service.UserService.mostSociable(),6,1,4,4
+service.UserService.nbOfCommunities(),2,1,2,2
+service.UserService.removeFriendship(Long),4,3,3,7
+"service.UserService.update(Long, String)",0,1,1,1
+ui.Ui.Ui(UserService),0,1,1,1
+ui.Ui.addFriend(),4,1,4,4
+ui.Ui.addUser(),4,1,4,4
+ui.Ui.deleteUser(),4,1,4,4
+ui.Ui.findFriendship(),3,1,3,3
+ui.Ui.findUser(),3,1,3,3
+ui.Ui.mostSociable(),0,1,1,1
+ui.Ui.nbOfCommunities(),0,1,1,1
+ui.Ui.printFriendships(),0,1,1,1
+ui.Ui.printUsers(),0,1,1,1
+ui.Ui.removeFriend(),4,1,4,4
+ui.Ui.run(),3,1,13,13
+ui.Ui.updateUser(),4,1,4,4
+
+Class,OCavg,OCmax,WMC
+Main,1.00,1,1
+domain.Entity,1.33,3,8
+domain.Friendship,1.18,3,13
+domain.User,1.00,1,7
+repo.AbstractFileRepository,1.00,1,4
+repo.FriendshipDbRepo,1.43,2,10
+repo.FriendshipFileRepo,1.50,2,6
+repo.InMemoryRepository,1.83,3,11
+repo.UserDbRepo,1.33,2,8
+repo.UserFileRepository,1.33,2,4
+repo.exception.EmptyIdException,1.00,1,1
+repo.exception.EmptyNameException,1.00,1,1
+repo.exception.EntityValidator,2.00,2,2
+repo.exception.NameContainsNumbersException,1.00,1,1
+repo.exception.Strategy,n/a,n/a,0
+repo.exception.UserValidator,4.00,4,4
+repo.exception.ValidationException,1.00,1,1
+repo.exception.ValidatorFactory,2.00,2,2
+service.UserService,2.00,4,28
+ui.Ui,1.62,2,21
+
+Package,v(G)avg,v(G)tot
+,1.00,1
+domain,1.38,33
+repo,2.07,62
+repo.exception,1.62,13
+service,2.79,39
+ui,3.38,44
+
+Module,v(G)avg,v(G)tot
+MAP-SocialNetwork-Gradle.main,2.13,192
+
+Project,v(G)avg,v(G)tot
+project,2.13,192
+
