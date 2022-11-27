@@ -10,16 +10,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserService{
 
-    FriendshipFileRepo friendshipRepo;
+    Repository<Long, Friendship> friendshipRepo;
 
     Repository<Long, User> repo;
 
     public UserService() {
         Validator<User> val = ValidatorFactory.createValidator(Strategy.user);
+        Validator<Friendship> valF = ValidatorFactory.createValidator(Strategy.entity);
 //        Repository<Long, User> repo = new InMemoryRepository<Long, User>(val);
 //        repo = new UserFileRepository(val, "src/users.txt");
+//        friendshipRepo = new FriendshipFileRepo(valF, "src/friendships.txt",repo);
         repo = new UserDbRepo("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres", (UserValidator) val);
-//        friendshipRepo = new FriendshipFileRepo("src/friendships.txt",repo);
+        friendshipRepo = new FriendshipDbRepo("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres", valF, repo);
+
     }
 
     /**
@@ -62,8 +65,12 @@ public class UserService{
     /**
      * @return all friendships
      */
-    public List<Friendship> allFriendships(){
-        return friendshipRepo.getFriendships();
+    public Iterable<Friendship> allFriendships(){
+        return friendshipRepo.findAll();
+    }
+
+    public Optional<Friendship> findFriendship(Long id){
+        return friendshipRepo.findOne(id);
     }
 
     /**
@@ -104,17 +111,18 @@ public class UserService{
      * @return null if Friendship exists or id1==id2
      *         or the new Friendship
      */
-    public Friendship addFriendship(Long id1, Long id2){
+    public Friendship addFriendship(Long idFriendship, Long id1, Long id2){
         Optional<User> u1 = repo.findOne(id1);
         Optional<User> u2 = repo.findOne(id2);
 
         if(u1==u2 || u1.isEmpty() || u2.isEmpty()){
             return null;
         }
-        Friendship friendship = new Friendship(u1.get(), u2.get());
+        //TODO move this code in friendship repo save
+        Friendship friendship = new Friendship(idFriendship, u1.get(), u2.get());
         ArrayList<Friendship> friendships1 = u1.get().getFriendships();
         ArrayList<Friendship> friendships2 = u2.get().getFriendships();
-        if(friendships1.contains(friendship)){
+        if(friendships1.contains(friendship) || friendships2.contains(friendship)){
             return null;
         }else{
             friendships1.add(friendship);
@@ -127,23 +135,23 @@ public class UserService{
 
     /**
      * removes friendship between entities with specified id
-     * @param id1 - id of first entity
+     * @param idFriendship - id of Friendship
      *      id must be not null
-     * @param id2 - id of first entity
-     *      id must be not null
-     * @return false if Friendship doesn't exist or id1==id2
+     * @return false if Friendship doesn't exist
      *         or true
      */
-    public boolean removeFriendship(Long id1, Long id2){
-        Optional<User> u1 = repo.findOne(id1);
-        Optional<User> u2 = repo.findOne(id2);
-        if(u1==u2 || u1.isEmpty() || u2.isEmpty()){
+    public boolean removeFriendship(Long idFriendship){
+        Optional<Friendship> friendship = friendshipRepo.findOne(idFriendship);
+        if(friendship.isEmpty())
+            return false;
+        User u1 = friendship.get().getU1();
+        User u2 = friendship.get().getU2();
+        if(u1==u2 || u1 == null || u2 == null){
             return false;
         }
-        Friendship friendship = new Friendship(u1.get(), u2.get());
-        ArrayList<Friendship> friendships1 = u1.get().getFriendships();
-        ArrayList<Friendship> friendships2 = u2.get().getFriendships();
-        return friendships1.remove(friendship) && friendships2.remove(friendship) && friendshipRepo.remove(friendship);
+        ArrayList<Friendship> friendships1 = u1.getFriendships();
+        ArrayList<Friendship> friendships2 = u2.getFriendships();
+        return friendshipRepo.delete(idFriendship).isPresent() && friendships1.remove(friendship.get()) && friendships2.remove(friendship.get());
     }
 
     /**

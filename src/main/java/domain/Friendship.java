@@ -5,24 +5,27 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Objects;
 
-public class Friendship {
+public class Friendship extends Entity<Long>{
     User u1;
     User u2;
 
     LocalDateTime friendsFrom;
 
-    public Friendship(User u1, User u2) {
+    public Friendship(Long id, User u1, User u2) {
+        super(id);
         this.u1 = u1;
         this.u2 = u2;
 //        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
         friendsFrom= LocalDateTime.now();
     }
 
-    public Friendship(User u1, User u2, LocalDateTime friendsFrom) {
+    public Friendship(Long id, User u1, User u2, LocalDateTime friendsFrom) {
+        super(id);
         this.u1 = u1;
         this.u2 = u2;
         this.friendsFrom=friendsFrom;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -40,8 +43,7 @@ public class Friendship {
 
     @Override
     public String toString() {
-        return "Friendship{" + u1.getId() + ','+u2.getId()+", "+ friendsFrom.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) +'}';
-        //TODO oare printeaza bine pt load??
+        return "Friendship{" + this.getId()+':' + u1.getId() + ','+u2.getId()+'}';//+", "+ friendsFrom.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) +'}';
     }
 
     public User getU1() {

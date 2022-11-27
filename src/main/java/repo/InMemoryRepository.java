@@ -13,6 +13,7 @@ public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<
         this.validator = validator;
         entities=new HashMap<ID,E>();
     }
+
     @Override
     public Optional<E> findOne(ID id){
         if (id==null)
@@ -32,7 +33,7 @@ public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<
             return Optional.of(entity);
         }
         else entities.put(entity.getId(),entity);
-        return null;
+        return Optional.empty();
     }
     @Override
     public Optional<E> delete(ID id) {

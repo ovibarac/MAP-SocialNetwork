@@ -79,11 +79,36 @@ public class UserDbRepo implements Repository<Long, User> {
 
     @Override
     public Optional<User> delete(Long aLong) {
+        String sql = "delete from \"Users\" where id=?";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setLong(1,aLong);
+            ps.execute();
+            //TODO returneaza empty si daca sterge
+            return findOne(aLong);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return Optional.empty();
     }
 
     @Override
     public Optional<User> update(User entity) {
+        String sql = "update \"Users\" set name=? where id=?";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, entity.getName());
+            ps.setLong(2,entity.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return Optional.empty();
     }
 }

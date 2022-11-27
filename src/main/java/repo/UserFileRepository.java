@@ -6,24 +6,17 @@ import repo.exception.Validator;
 import java.io.*;
 import java.util.Optional;
 
-public class UserFileRepository extends InMemoryRepository<Long, User>{
-    File userFile;
+public class UserFileRepository extends AbstractFileRepository<Long, User>{
 
-    public UserFileRepository(Validator validator, String userFilename) {
-        super(validator);
-        userFile=new File(userFilename);
-        try {
-            userFile.createNewFile();
-        }catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+    public UserFileRepository(Validator<User> validator, String userFilename) {
+        super(validator, userFilename);
         loadFromFile();
     }
 
-    private void loadFromFile(){
+    @Override
+    void loadFromFile(){
         try{
-            BufferedReader reader= new BufferedReader(new FileReader(userFile.getName()));
+            BufferedReader reader= new BufferedReader(new FileReader(file.getName()));
             String line= reader.readLine();
             while(line!=null){
                 save(new User(line));
@@ -36,9 +29,10 @@ public class UserFileRepository extends InMemoryRepository<Long, User>{
         }
     }
 
-    private void saveToFile(){
+    @Override
+    void saveToFile(){
         try {
-            FileWriter writer = new FileWriter(userFile.getName());
+            FileWriter writer = new FileWriter(file.getName());
             entities.forEach((id, ent)->{
                 try {
                     writer.write(ent.toString()+'\n');
@@ -48,26 +42,5 @@ public class UserFileRepository extends InMemoryRepository<Long, User>{
             writer.close();
         }catch(IOException ignored){
         }
-    }
-
-    @Override
-    public Optional<User> save(User entity) {
-        Optional<User> e = super.save(entity);
-        saveToFile();
-        return e;
-    }
-
-    @Override
-    public Optional<User> delete(Long id) {
-        Optional<User> d = super.delete(id);
-        saveToFile();
-        return d;
-    }
-
-    @Override
-    public Optional<User> update(User entity) {
-        Optional<User> u= super.update(entity);
-        saveToFile();
-        return u;
     }
 }

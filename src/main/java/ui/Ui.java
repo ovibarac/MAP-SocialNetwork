@@ -25,7 +25,7 @@ public class Ui {
     public void run(){
         int option=-1;
         while(option!=0){
-            System.out.println("1.Add User\n2.Delete User\n3.Update user\n4.Add friend\n5.Remove friend\n6.Number of communities\n7.Most sociable community\n8.Print Users\n9.Print Friendships\n10.Find user\n0.Exit");
+            System.out.println("1.Add User\n2.Delete User\n3.Update user\n4.Add friend\n5.Remove friend\n6.Number of communities\n7.Most sociable community\n8.Print Users\n9.Print Friendships\n10.Find user\n11.Find Friendship\n0.Exit");
             System.out.println("Option=");
             option=scanner.nextInt();
 
@@ -40,6 +40,7 @@ public class Ui {
                 case 8 -> printUsers();
                 case 9 -> printFriendships();
                 case 10 -> findUser();
+                case 11 -> findFriendship();
             }
             System.out.println();
         }
@@ -107,11 +108,13 @@ public class Ui {
 
     private void addFriend() {
         try{
+            System.out.println("ID Friendship=");
+            Long idF=scanner.nextLong();
             System.out.println("ID1=");
             Long id=scanner.nextLong();
             System.out.println("ID2=");
             Long id2=scanner.nextLong();
-            Friendship friendship = srv.addFriendship(id, id2);
+            Friendship friendship = srv.addFriendship(idF,id, id2);
             if(friendship!=null){
                 System.out.println(friendship);
             }else{
@@ -128,12 +131,10 @@ public class Ui {
 
     private void removeFriend() {
         try{
-            System.out.println("ID1=");
-            Long id=scanner.nextLong();
-            System.out.println("ID2=");
-            Long id2=scanner.nextLong();
+            System.out.println("ID Friendship=");
+            Long idF=scanner.nextLong();
 
-            if(srv.removeFriendship(id, id2)){
+            if(srv.removeFriendship(idF)){
                 System.out.println("Friendship removed");
             }else{
                 System.out.println("Friendship does not exist");
@@ -170,7 +171,7 @@ public class Ui {
             Long id=scanner.nextLong();
             Optional<User> u = srv.findOne(id);
             if(u.isPresent()){
-                System.out.println(u);
+                System.out.println(u.get());
             }else{
                 System.out.println("User does not exist");
             }
@@ -181,48 +182,20 @@ public class Ui {
         }
     }
 
-    private void generate(){
-        srv.createAndAdd(1L, "Mimi");
-        srv.createAndAdd(2L, "Mumu");
-        srv.createAndAdd(3L, "Mama");
-        srv.createAndAdd(4L, "Andrei");
-        srv.createAndAdd(5L, "Maria");
-        srv.createAndAdd(6L, "George");
+    private void findFriendship(){
+        try{
+            System.out.println("ID=");
+            Long id=scanner.nextLong();
+            Optional<Friendship> f = srv.findFriendship(id);
+            if(f.isPresent()){
+                System.out.println(f.get());
+            }else{
+                System.out.println("Friendship does not exist");
+            }
 
-        srv.addFriendship(1L, 2L);
-        srv.addFriendship(3L, 4L);
-        srv.addFriendship(2L, 3L);
-        srv.addFriendship(5L, 6L);
-    }
-    public void test(){
-        try {
-            srv.createAndAdd(1L, "Mimi");
-            srv.createAndAdd(2L, "Mumu");
-            srv.createAndAdd(3L, "Mama");
-            srv.createAndAdd(3L, "Mama");
-        }catch(ValidationException | IllegalArgumentException e){
-            System.out.println(e.getMessage());
+        } catch(InputMismatchException e){
+            System.out.println("Incorrect input");
+            scanner.next();
         }
-        //repo.findAll().forEach(x-> System.out.println(x));
-        srv.findAll().forEach(System.out::println);
-
-//        try{
-//            srv.delete(1L);
-//        }catch (IllegalArgumentException e){
-//            System.out.println(e.getMessage());
-//        }
-//        srv.findAll().forEach((x)->{
-//            x.getFriendships().forEach(System.out::println);});
-//
-        System.out.println(srv.addFriendship(1L, 2L));
-//        System.out.println(srv.addFriendship(2L, 3L));
-//        System.out.println(srv.addFriendship(2L, 3L));
-//        System.out.println(srv.removeFriendship(2L, 3L));
-//        System.out.println(srv.removeFriendship(2L, 3L));
-
-//
-
-        System.out.println(srv.nbOfCommunities());
-        srv.mostSociable().forEach(System.out::println);
     }
 }
