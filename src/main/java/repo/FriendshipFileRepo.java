@@ -29,9 +29,9 @@ public class FriendshipFileRepo extends AbstractFileRepository<Long, Friendship>
                 Long idF=Long.parseLong(line.substring(line.indexOf('{') + 1, line.indexOf(':')));
                 Long id1=Long.parseLong(line.substring(line.indexOf(':') + 1, line.indexOf(',')));
                 Long id2=Long.parseLong(line.substring(line.indexOf(',') + 1, line.indexOf(' ')-1));
-//                LocalDateTime date = LocalDateTime.parse(line.substring(line.indexOf(' ')+1, line.indexOf('}')));
+                LocalDateTime date = LocalDateTime.parse(line.substring(line.indexOf(' ')+1, line.indexOf('}')));
 
-                Friendship f = createFriendshipAndAddToUsers(idF, id1, id2);
+                Friendship f = createFriendshipAndAddToUsers(idF, id1, id2, date);
 
                 save(f);
                 line= reader.readLine();
@@ -66,13 +66,13 @@ public class FriendshipFileRepo extends AbstractFileRepository<Long, Friendship>
      * @return null if users are not found,
      *         or the new Friendship
      */
-    public Friendship createFriendshipAndAddToUsers(Long id, Long idU1, Long idU2){
+    public Friendship createFriendshipAndAddToUsers(Long id, Long idU1, Long idU2, LocalDateTime localDateTime){
         if(userRepo.findOne(idU1).isEmpty() || userRepo.findOne(idU2).isEmpty())
             return null;
         User u1 = userRepo.findOne(idU1).get();
         User u2 = userRepo.findOne(idU2).get();
 
-        Friendship f = new Friendship(id,u1, u2);//, localDateTime);
+        Friendship f = new Friendship(id,u1, u2, localDateTime);
 
         ArrayList<Friendship> friendships1 = u1.getFriendships();
         friendships1.add(f);

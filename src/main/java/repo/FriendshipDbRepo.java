@@ -8,6 +8,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
@@ -37,14 +38,14 @@ public class FriendshipDbRepo implements Repository<Long, Friendship> {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                //TODO add date again
                 Long id = resultSet.getLong("id");
                 Long idU1 = resultSet.getLong("u1");
                 Long idU2 = resultSet.getLong("u2");
-                Date date = resultSet.getDate("date");
-                LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+                String dateStr = resultSet.getString("date");
+                LocalDateTime date = LocalDateTime.parse(dateStr);
+//                LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
 
-                Friendship f = createFriendshipAndAddToUsers(id, idU1, idU2);
+                Friendship f = createFriendshipAndAddToUsers(id, idU1, idU2, date);
 
                 return Optional.of(f);
             }
@@ -67,10 +68,10 @@ public class FriendshipDbRepo implements Repository<Long, Friendship> {
                 Long id = resultSet.getLong("id");
                 Long idU1 = resultSet.getLong("u1");
                 Long idU2 = resultSet.getLong("u2");
-                Date date = resultSet.getDate("date");
-                LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+                String dateStr = resultSet.getString("date");
+                LocalDateTime date = LocalDateTime.parse(dateStr);
 
-                Friendship f = createFriendshipAndAddToUsers(id, idU1, idU2);
+                Friendship f = createFriendshipAndAddToUsers(id, idU1, idU2, date);
 
                 friendships.add(f);
             }
@@ -85,18 +86,14 @@ public class FriendshipDbRepo implements Repository<Long, Friendship> {
     @Override
     public Optional<Friendship> save(Friendship entity) {
 
-        String sql = "insert into \"friendships\" (id, u1, u2 ) values (DEFAULT, ?, ?)";
+        String sql = "insert into \"friendships\" (id, u1, u2, date) values (DEFAULT, ?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
-//
-//             ZonedDateTime zdt = entity.getFriendsFrom().atZone(ZoneId.systemDefault());
-//             Date date = (Date) Date.from(zdt.toInstant());
-
-            //TODO save date 
             ps.setLong(1, entity.getU1().getId());
             ps.setLong(2, entity.getU2().getId());
-//            ps.setDate(3, date);
+            String date = entity.getFriendsFrom().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            ps.setString(3, date);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,7 +105,7 @@ public class FriendshipDbRepo implements Repository<Long, Friendship> {
     @Override
     public Optional<Friendship> delete(Long aLong) {
         String sql = "delete from \"friendships\" where id=?";
-        //TODO make abstract db repo, everything is the same except the table name
+
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
             Optional<Friendship> f = findOne(aLong);
@@ -148,13 +145,13 @@ public class FriendshipDbRepo implements Repository<Long, Friendship> {
      * @return null if users are not found,
      *         or the new Friendship
      */
-    public Friendship createFriendshipAndAddToUsers(Long id, Long idU1, Long idU2){
+    public Friendship createFriendshipAndAddToUsers(Long id, Long idU1, Long idU2, LocalDateTime localDateTime){
         if(userRepo.findOne(idU1).isEmpty() || userRepo.findOne(idU2).isEmpty())
             return null;
         User u1 = userRepo.findOne(idU1).get();
         User u2 = userRepo.findOne(idU2).get();
 
-        Friendship f = new Friendship(id,u1, u2);//, localDateTime);
+        Friendship f = new Friendship(id,u1, u2, localDateTime);
 
         ArrayList<Friendship> friendships1 = u1.getFriendships();
         friendships1.add(f);
@@ -167,3 +164,4 @@ public class FriendshipDbRepo implements Repository<Long, Friendship> {
         return f;
     }
 }
+//TODO make abstract db repo, everything is the same except the table name

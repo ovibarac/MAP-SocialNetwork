@@ -43,7 +43,7 @@ public class Friendship extends Entity<Long>{
 
     @Override
     public String toString() {
-        return "Friendship{" + this.getId()+':' + u1.getId() + ','+u2.getId()+'}';//+", "+ friendsFrom.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) +'}';
+        return "Friendship{" + this.getId()+':' + u1.getId() + ','+u2.getId()+", "+ friendsFrom.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) +'}';
     }
 
     public User getU1() {

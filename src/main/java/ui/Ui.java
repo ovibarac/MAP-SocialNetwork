@@ -49,8 +49,8 @@ public class Ui {
 
     private void addUser(){
         try{
-            System.out.println("ID=");
-            Long id=scanner.nextLong();
+//            System.out.println("ID=");
+            Long id=0L;//scanner.nextLong();
             System.out.println("Name=");
             String name=scanner.next();
             if(srv.createAndAdd(id, name).isEmpty()){
@@ -108,8 +108,8 @@ public class Ui {
 
     private void addFriend() {
         try{
-            System.out.println("ID Friendship=");
-            Long idF=scanner.nextLong();
+//            System.out.println("ID Friendship=");
+            Long idF=0L;//scanner.nextLong();
             System.out.println("ID1=");
             Long id=scanner.nextLong();
             System.out.println("ID2=");
