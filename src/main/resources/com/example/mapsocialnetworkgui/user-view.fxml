@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mapsocialnetworkgui.controller.UserController">
+   <children>
+      <HBox prefHeight="400.0" prefWidth="600.0">
+         <children>
+            <TableView fx:id="userTable" prefHeight="400.0" prefWidth="145.0">
+              <columns>
+                <TableColumn fx:id="id" prefWidth="30.0" text="Id" />
+                <TableColumn fx:id="name" prefWidth="115.0" text="Name" />
+              </columns>
+            </TableView>
+            <VBox prefHeight="400.0" prefWidth="456.0">
+               <children>
+                  <HBox prefHeight="25.0" prefWidth="456.0">
+                     <children>
+                        <TextField fx:id="addUserField" promptText="New user name" />
+                        <Button fx:id="addUserBtn" mnemonicParsing="false" onAction="#handleAddUser" text="Add User" />
+                        <Button fx:id="updateUserBtn" mnemonicParsing="false" onAction="#handleUpdateUser" text="Update User" />
+                     </children>
+                  </HBox>
+                  <Button fx:id="friendsButton" mnemonicParsing="false" onAction="#handleFriendsWindow" text="Friends" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <Button fx:id="deleteUserBtn" mnemonicParsing="false" onAction="#handleDeleteUser" text="Delete User" />
+                  </HBox>
+
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
